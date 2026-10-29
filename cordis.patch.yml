@@ -1,0 +1,7 @@
+# Layer contributed when a profile lists this bundle (`dsh plugin add dsh-bsk-daemon`).
+#
+# The plugin registers its own tools and the daemon lifecycle; every value below
+# can be overridden in the profile's cordis.patch.yml.
+- insert:
+    - id: bsk-daemon
+      name: dsh-bsk-daemon

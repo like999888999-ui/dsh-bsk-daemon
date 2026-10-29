@@ -1,0 +1,54 @@
+{
+  "name": "dsh-bsk-daemon",
+  "version": "0.1.0",
+  "description": "Keep the BrowserSkill (bsk) daemon available on demand inside DeepSeek Harness, even on Windows hosts that forbid detached child processes. Adds lifecycle tools and an on-demand wake shim so browser-skill never fails with 'daemon not running'.",
+  "type": "module",
+  "license": "MIT",
+  "author": "like999888999-ui",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/like999888999-ui/dsh-bsk-daemon.git"
+  },
+  "homepage": "https://github.com/like999888999-ui/dsh-bsk-daemon#readme",
+  "bugs": {
+    "url": "https://github.com/like999888999-ui/dsh-bsk-daemon/issues"
+  },
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/platform.js",
+    "lib/shim/BskShim.cs",
+    "lib/shim/build-shim.mjs",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "dsh-plugin",
+    "browserskill",
+    "bsk",
+    "browser-automation"
+  ],
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/schemastery": "^3.18.2"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "check": "node --check lib/index.js && node --check lib/platform.js",
+    "test": "npm run check && node --test test/"
+  }
+}
