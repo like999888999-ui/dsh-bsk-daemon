@@ -76,3 +76,12 @@ test('plugin module exports the dsh contract', async () => {
   assert.equal(typeof mod.apply, 'function')
   assert.ok(mod.Config, 'Config schema must be exported')
 })
+
+test('plugin declares the tools service it depends on', async () => {
+  const mod = await import('../lib/index.js')
+  // Regression guard: without `tools` in inject, the host mounts this plugin
+  // before the tool registry exists. apply() then throws on ctx.tools.register
+  // and the plugin ends up loaded with zero tools and no visible error.
+  assert.ok(Array.isArray(mod.inject), 'inject must be an array')
+  assert.ok(mod.inject.includes('tools'), 'inject must include "tools"')
+})
