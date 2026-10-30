@@ -2,6 +2,7 @@
 
 **Make [BrowserSkill](https://github.com/Tencent/BrowserSkill)'s `bsk` daemon start on demand and exit when idle inside [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) — and fix the Windows `os error 5` that stops it from starting at all.**
 
+[![CI](https://github.com/like999888999-ui/dsh-bsk-daemon/actions/workflows/ci.yml/badge.svg)](https://github.com/like999888999-ui/dsh-bsk-daemon/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Node](https://img.shields.io/badge/node-%E2%89%A522.13.0-brightgreen)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
@@ -170,6 +171,29 @@ schtasks /Delete /TN bsk-daemon /F
 ```
 
 You can also delete `bsk-daemon-launch.vbs` and `bsk-daemon.xml` from `~/.bsk/`.
+
+## Development
+
+The plugin has **no runtime dependencies** — `lib/index.js` imports only Node
+built-ins plus `@deepseek-ai/schemastery`, which ships with the dsh host and has a
+local fallback (`lib/schema-fallback.js`) for when it is absent. So there is
+nothing to `npm install`.
+
+```sh
+npm run check   # syntax-check both entry files
+npm test        # check + the full unit suite
+node --test     # the suite alone
+```
+
+CI runs the suite on Ubuntu, Windows and macOS against Node 22 and 24, and
+separately compiles the shim on a clean Windows image. See
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+
+Because the shim is C# compiled by the in-box `csc.exe`, its build is exercised
+in CI rather than unit-tested — a shim that compiles is the only meaningful
+assertion.
+
+Release history is in [CHANGELOG.md](CHANGELOG.md).
 
 ## Limitations
 

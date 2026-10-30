@@ -2,6 +2,7 @@
 
 **让 [BrowserSkill](https://github.com/Tencent/BrowserSkill)（`bsk`）的守护进程在 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 里按需唤醒、空闲退出 —— 并修掉 Windows 上它根本起不来的 `os error 5`。**
 
+[![CI](https://github.com/like999888999-ui/dsh-bsk-daemon/actions/workflows/ci.yml/badge.svg)](https://github.com/like999888999-ui/dsh-bsk-daemon/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Node](https://img.shields.io/badge/node-%E2%89%A522.13.0-brightgreen)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
@@ -170,6 +171,22 @@ schtasks /Delete /TN bsk-daemon /F
 ```
 
 `~/.bsk/` 下的 `bsk-daemon-launch.vbs` 与 `bsk-daemon.xml` 可一并删除。
+
+## 开发
+
+本插件**没有运行时依赖** —— `lib/index.js` 只导入 Node 内置模块，外加 dsh 宿主自带的 `@deepseek-ai/schemastery`；宿主没带这个包时走本地兜底实现（`lib/schema-fallback.js`）。所以不需要 `npm install`。
+
+```sh
+npm run check   # 语法检查两个入口文件
+npm test        # 检查 + 完整单元测试
+node --test     # 只跑测试
+```
+
+CI 会在 Ubuntu、Windows、macOS 三平台、Node 22 与 24 两个版本上跑测试，另外单独在一个干净的 Windows 镜像上编译 shim。见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
+
+shim 是 C# 代码、用系统自带的 `csc.exe` 编译，所以它靠 CI 验证而不是单元测试 —— 「能编译出 exe」本身就是最有意义的断言。
+
+版本变更见 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 已知限制
 

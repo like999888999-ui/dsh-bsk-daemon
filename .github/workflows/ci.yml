@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (${{ matrix.os }}, node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [22, 24]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      # No `npm install`: the plugin has no runtime dependencies. Its only peer
+      # (@deepseek-ai/schemastery) ships with the dsh host, and lib/index.js
+      # falls back to lib/schema-fallback.js when it is absent — which is
+      # exactly the situation in CI, so the tests also cover that path.
+      - name: Syntax check
+        run: npm run check
+
+      - name: Unit tests
+        run: node --test
+
+  shim-build:
+    name: build shim (windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Proves the in-box csc.exe path works on a clean Windows image, so a
+      # user hitting "csc.exe not found" knows it is their machine, not the code.
+      - name: Compile the wake shim
+        run: node lib/shim/build-shim.mjs --bsk "$env:USERPROFILE\fake-bsk.exe" --out "$env:RUNNER_TEMP\bsk-shim.exe"
+
+      - name: Verify the artifact
+        run: |
+          if (-not (Test-Path "$env:RUNNER_TEMP\bsk-shim.exe")) {
+            throw "shim was not produced"
+          }
+          $size = (Get-Item "$env:RUNNER_TEMP\bsk-shim.exe").Length
+          Write-Host "shim size: $size bytes"
+          if ($size -lt 1024) { throw "shim looks too small to be a real exe" }
