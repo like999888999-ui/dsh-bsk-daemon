@@ -1,7 +1,7 @@
 {
   "name": "dsh-bsk-daemon",
-  "version": "0.1.0",
-  "description": "Keep the BrowserSkill (bsk) daemon available on demand inside DeepSeek Harness, even on Windows hosts that forbid detached child processes. Adds lifecycle tools and an on-demand wake shim so browser-skill never fails with 'daemon not running'.",
+  "version": "0.1.1",
+  "description": "Keep the BrowserSkill bsk daemon available on demand inside DeepSeek Harness. Fixes the Windows 'os error 5' that stops the daemon from starting at all, by owning it with a scheduled task and a wake shim.",
   "type": "module",
   "license": "MIT",
   "author": "like999888999-ui",
