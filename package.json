@@ -21,6 +21,7 @@
   "files": [
     "lib/index.js",
     "lib/platform.js",
+    "lib/schema-fallback.js",
     "lib/shim/BskShim.cs",
     "lib/shim/build-shim.mjs",
     "cordis.patch.yml",
